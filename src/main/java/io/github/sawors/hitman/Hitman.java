@@ -1,6 +1,9 @@
 package io.github.sawors.hitman;
 
+import io.github.sawors.hitman.commands.CreateGame;
+import io.github.sawors.hitman.commands.SetRole;
 import io.github.sawors.hitman.game.GameManager;
+import io.github.sawors.hitman.game.SniperListeners;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -10,7 +13,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public final class Hitman extends JavaPlugin {
@@ -25,6 +30,14 @@ public final class Hitman extends JavaPlugin {
         instance = this;
         
         saveDefaultConfig();
+        
+        getServer().getPluginManager().registerEvents(new SniperListeners(),this);
+        try{
+            Objects.requireNonNull(getServer().getPluginCommand("setrole")).setExecutor(new SetRole());
+            Objects.requireNonNull(getServer().getPluginCommand("hgame")).setExecutor(new CreateGame());
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
     }
     
     @Override

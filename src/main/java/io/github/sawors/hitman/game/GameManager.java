@@ -5,11 +5,14 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 public class GameManager {
     
-    private List<UUID> playerlist = new ArrayList<>();
+    private HashMap<UUID, PlayerRole> playermap = new HashMap<>();
     private String gameid;
     // map data loading
     private List<Location> npcspawns = new ArrayList<>();
@@ -26,11 +29,21 @@ public class GameManager {
     }
     
     public void addPlayer(Player p){
-        playerlist.add(p.getUniqueId());
+        playermap.put(p.getUniqueId(), PlayerRole.NONE);
+        Hitman.linkPlayer(p.getUniqueId(),this.getId());
     }
     
     public void removePlayer(Player p){
-        playerlist.remove(p.getUniqueId());
+        playermap.remove(p.getUniqueId());
+        Hitman.unlinkPlayer(p.getUniqueId());
+    }
+    
+    public void setPlayerRole(UUID player, PlayerRole role){
+        playermap.put(player,role);
+    }
+    
+    public PlayerRole getPlayerRole(UUID player){
+        return playermap.get(player);
     }
     
     public String getId(){

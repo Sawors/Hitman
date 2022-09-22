@@ -4,3 +4,8 @@ main: io.github.sawors.hitman.Hitman
 api-version: 1.18
 depend: [ Citizens ]
 authors: [ Sawors ]
+commands:
+  setrole:
+    description: uwu
+  hgame:
+    description: uwu
