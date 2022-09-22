@@ -1,26 +1,23 @@
 package io.github.sawors.hitman;
 
+import io.github.sawors.hitman.game.GameManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.logging.Level;
 
 public final class Hitman extends JavaPlugin {
     
     private static JavaPlugin instance;
+    private static HashMap<String, GameManager> gamelist = new HashMap<>();
+    private static HashMap<UUID, String> playerlink = new HashMap<>();
     
     @Override
     public void onEnable() {
@@ -59,5 +56,29 @@ public final class Hitman extends JavaPlugin {
     static String getTimeText(){
         LocalDateTime time = LocalDateTime.now();
         return "["+time.getDayOfMonth()+"."+time.getMonthValue()+"."+time.getYear()+" "+time.getHour()+":"+time.getMinute()+":"+time.getSecond()+"]";
+    }
+    
+    public static void registerNewGame(GameManager game){
+        gamelist.put(game.getId(),game);
+    }
+    
+    public static void unregisterGame(String gameid){
+        gamelist.remove(gameid);
+    }
+    
+    public static @Nullable GameManager getGameById(String id){
+        return gamelist.get(id);
+    }
+    
+    public static void linkPlayer(UUID playerid, String gameid){
+        playerlink.put(playerid,gameid);
+    }
+    
+    public static void unlinkPlayer(UUID playerid){
+        playerlink.remove(playerid);
+    }
+    
+    public static @Nullable String getPlayerGameId(UUID playerid){
+        return playerlink.get(playerid);
     }
 }
