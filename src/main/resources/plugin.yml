@@ -1,0 +1,6 @@
+name: Hitman
+version: '${project.version}'
+main: io.github.sawors.hitman.Hitman
+api-version: 1.18
+depend: [ Citizens ]
+authors: [ Sawors ]
