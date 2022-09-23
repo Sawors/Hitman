@@ -3,10 +3,7 @@ package io.github.sawors.hitman.game.sniper;
 import io.github.sawors.hitman.Hitman;
 import io.github.sawors.hitman.game.sniper.items.SniperRifle;
 import io.papermc.paper.event.entity.EntityLoadCrossbowEvent;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -51,8 +48,9 @@ public class SniperListeners implements Listener {
     
             RayTraceResult rt = player.rayTraceBlocks(maxdistance);
             Entity e = player.getTargetEntity(maxdistance);
-            Vector direction = player.getLocation().getDirection().normalize();
-            Location spawnloc = player.getEyeLocation().clone();
+            Vector halfdirection = player.getLocation().getDirection().normalize().multiply(.5);
+            Location spawnloc = player.getLocation().clone().add(player.getBoundingBox().getCenter());
+            World w = spawnloc.getWorld();
             int distance = (Hitman.getPlugin().getServer().getSimulationDistance()-1)*8;
             
             if(e instanceof LivingEntity living){
@@ -60,12 +58,14 @@ public class SniperListeners implements Listener {
                 distance = (int) player.getEyeLocation().distance(living.getEyeLocation());
             } else if(rt != null){
                 Location targetloc = rt.getHitPosition().toLocation(player.getWorld());
-                targetloc.getWorld().spawnParticle(Particle.REDSTONE,targetloc,32,.1,.1,.1,0, new Particle.DustOptions(Color.RED,1));
+                w.spawnParticle(Particle.REDSTONE,targetloc,32,.1,.1,.1,0, new Particle.DustOptions(Color.RED,1));
                 distance = (int) player.getEyeLocation().distance(targetloc);
             }
     
-            for(int i = 0; i<distance; i++){
-                spawnloc.add(direction);
+            for(int i = 0; i<distance*2; i++){
+                spawnloc.add(halfdirection);
+    
+                w.spawnParticle(Particle.REDSTONE, spawnloc,1,0,0,0,.01, new Particle.DustOptions(Color.WHITE,.5f));
             }
             
         }
