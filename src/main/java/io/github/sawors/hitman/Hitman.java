@@ -3,7 +3,7 @@ package io.github.sawors.hitman;
 import io.github.sawors.hitman.commands.CreateGame;
 import io.github.sawors.hitman.commands.SetRole;
 import io.github.sawors.hitman.game.GameManager;
-import io.github.sawors.hitman.game.SniperListeners;
+import io.github.sawors.hitman.game.sniper.SniperListeners;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -34,7 +34,8 @@ public final class Hitman extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SniperListeners(),this);
         try{
             Objects.requireNonNull(getServer().getPluginCommand("setrole")).setExecutor(new SetRole());
-            Objects.requireNonNull(getServer().getPluginCommand("hgame")).setExecutor(new CreateGame());
+            Objects.requireNonNull(getServer().getPluginCommand("creategame")).setExecutor(new CreateGame());
+            Objects.requireNonNull(getServer().getPluginCommand("giveitem")).setExecutor(new CreateGame());
         }catch (NullPointerException e){
             e.printStackTrace();
         }

@@ -1,6 +1,8 @@
-package io.github.sawors.hitman.game;
+package io.github.sawors.hitman.game.sniper;
 
 import io.github.sawors.hitman.Hitman;
+import io.github.sawors.hitman.game.GameManager;
+import io.github.sawors.hitman.game.PlayerRole;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -20,7 +22,7 @@ public class SniperListeners implements Listener {
         GameManager game = Hitman.getGameById(gameid);
         
         if(event.isSneaking() && game != null && Objects.equals(game.getPlayerRole(p.getUniqueId()), PlayerRole.SNIPER)){
-            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20*5,5,false,false));
+            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20*5,12,false,false));
         }
     }
     
