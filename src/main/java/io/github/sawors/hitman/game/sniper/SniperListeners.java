@@ -49,7 +49,7 @@ public class SniperListeners implements Listener {
             RayTraceResult rt = player.rayTraceBlocks(maxdistance);
             Entity e = player.getTargetEntity(maxdistance);
             Vector halfdirection = player.getLocation().getDirection().normalize().multiply(.5);
-            Location spawnloc = player.getLocation().clone().add(player.getBoundingBox().getCenter());
+            Location spawnloc = player.getLocation().clone().add(0,1.25,0);
             World w = spawnloc.getWorld();
             int distance = (Hitman.getPlugin().getServer().getSimulationDistance()-1)*8;
             
