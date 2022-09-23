@@ -16,15 +16,16 @@ public abstract class HitmanItem {
     
     List<Component> lore = new ArrayList<>();
     Component name = null;
-    String id = formatTextToId(getClass().getSimpleName());
+    String id = getTypeId();
     String variant = "";
+    Material mat = Material.STICK;
     
     
     public ItemStack get(){
-        ItemStack item = new ItemStack(Material.STICK);
+        ItemStack item = new ItemStack(mat);
         ItemMeta meta = item.getItemMeta();
     
-        meta.getPersistentDataContainer().set(getItemKey(), PersistentDataType.STRING,id != null ? id : formatTextToId(getClass().getSimpleName()));
+        meta.getPersistentDataContainer().set(getItemKey(), PersistentDataType.STRING,id != null ? id : getTypeId());
         if(name != null){
             meta.displayName(name);
         }
@@ -32,6 +33,7 @@ public abstract class HitmanItem {
             meta.getPersistentDataContainer().set(getVariantKey(), PersistentDataType.STRING,variant);
         }
         meta.lore(lore);
+        meta.setUnbreakable(true);
         
         item.setItemMeta(meta);
         
@@ -68,6 +70,10 @@ public abstract class HitmanItem {
     
     public void setVariant(String variant) {
         this.variant = variant;
+    }
+    
+    public void setMaterial(Material material){
+        this.mat = material;
     }
     
     public static NamespacedKey getItemKey(){
@@ -109,5 +115,9 @@ public abstract class HitmanItem {
         String id = item.getType().toString().toLowerCase(Locale.ROOT);
         String hitmanid = item.getItemMeta().getPersistentDataContainer().get(getItemKey(),PersistentDataType.STRING);
         return hitmanid != null ? hitmanid : id;
+    }
+    
+    public String getTypeId(){
+        return formatTextToId(getClass().getSimpleName());
     }
 }

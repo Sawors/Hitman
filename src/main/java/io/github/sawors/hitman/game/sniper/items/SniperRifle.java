@@ -4,27 +4,30 @@ import io.github.sawors.hitman.Hitman;
 import io.github.sawors.hitman.game.sniper.HitmanItem;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 
 import java.util.List;
 
-public class SniperWeapon extends HitmanItem {
+public class SniperRifle extends HitmanItem {
     
-    public SniperWeapon(){
+    public SniperRifle(){
+        setMaterial(Material.CROSSBOW);
         setName(Component.text(ChatColor.GOLD+"Sniper Rifle"));
         List<Component> templore = List.of(
                 Component.text(ChatColor.GRAY+"Use this weapon to kill your target"),
-                Component.text(ChatColor.GRAY+"Sneak to zoom, Right-Click to shoot")
+                Component.text(ChatColor.YELLOW+"Sneak"+ChatColor.GRAY+" to "+ChatColor.BOLD+"zoom"+ChatColor.GRAY+", "+ChatColor.YELLOW+"Right-Click"+ChatColor.GRAY+" to "+ChatColor.BOLD+"shoot")
         );
         setLore(templore);
     }
     
-    public SniperWeapon(String variant, String name){
+    public SniperRifle(String variant, String name){
+        setMaterial(Material.CROSSBOW);
         setName(Component.text(ChatColor.GOLD+name));
         setVariant(variant);
         List<Component> templore = List.of(
                 Component.text(ChatColor.GRAY+"Use this weapon to kill your target"),
-                Component.text(ChatColor.GRAY+"Sneak to zoom, Right-Click to shoot")
+                Component.text(ChatColor.YELLOW+"Sneak"+ChatColor.GRAY+" to "+ChatColor.BOLD+"zoom"+ChatColor.GRAY+", "+ChatColor.YELLOW+"Right-Click"+ChatColor.GRAY+" to "+ChatColor.BOLD+"shoot")
         );
         setLore(templore);
     }

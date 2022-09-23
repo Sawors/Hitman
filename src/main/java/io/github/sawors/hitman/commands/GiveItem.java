@@ -1,7 +1,7 @@
 package io.github.sawors.hitman.commands;
 
+import io.github.sawors.hitman.game.sniper.items.SniperRifle;
 import io.github.sawors.hitman.game.sniper.items.SniperSpyglass;
-import io.github.sawors.hitman.game.sniper.items.SniperWeapon;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,7 +19,7 @@ public class GiveItem implements CommandExecutor {
             String itemname = args[0];
             new ItemStack(Material.STICK);
             ItemStack item = switch (itemname.toLowerCase(Locale.ROOT)) {
-                case "sniper" -> new SniperWeapon().get();
+                case "sniper" -> new SniperRifle().get();
                 case "spyglass" -> new SniperSpyglass().get();
                 default -> new ItemStack(Material.STICK);
             };

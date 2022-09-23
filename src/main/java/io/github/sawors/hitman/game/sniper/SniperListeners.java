@@ -1,33 +1,80 @@
 package io.github.sawors.hitman.game.sniper;
 
 import io.github.sawors.hitman.Hitman;
-import io.github.sawors.hitman.game.GameManager;
-import io.github.sawors.hitman.game.PlayerRole;
+import io.github.sawors.hitman.game.sniper.items.SniperRifle;
+import io.papermc.paper.event.entity.EntityLoadCrossbowEvent;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import java.util.Objects;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 
 public class SniperListeners implements Listener {
     
     @EventHandler
     public static void onSniperScopeIn(PlayerToggleSneakEvent event){
         Player p = event.getPlayer();
-        String gameid = Hitman.getPlayerGameId(p.getUniqueId());
-        GameManager game = Hitman.getGameById(gameid);
         
-        if(event.isSneaking() && game != null && Objects.equals(game.getPlayerRole(p.getUniqueId()), PlayerRole.SNIPER)){
-            p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 20*5,12,false,false));
+        if(event.isSneaking() && HitmanItem.getItemId(p.getInventory().getItemInMainHand()).equals(new SniperRifle().getId())){
+            new BukkitRunnable(){
+                @Override
+                public void run() {
+                    if(p.isOnline() && p.getInventory().getItemInMainHand().hasItemMeta() && HitmanItem.getItemId(p.getInventory().getItemInMainHand()).equals(new SniperRifle().getId()) && p.isSneaking()){
+                        p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 10,4,false,false));
+                    } else {
+                        this.cancel();
+                    }
+                }
+            }.runTaskTimer(Hitman.getPlugin(),0,10);
         }
     }
     
     @EventHandler
-    public static void onSniperShoot(PlayerInteractEvent event){
-        event.getPlayer().sendMessage(event.getAction().toString());
+    public static void onSniperShoot(EntityShootBowEvent event){
+        if(event.getBow() != null && HitmanItem.getItemId(event.getBow()).equals(new SniperRifle().getId()) && event.getEntity() instanceof Player player){
+            event.getProjectile().remove();
+            event.getEntity().getLocation().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_GENERIC_EXPLODE,12,1);
+            event.getEntity().getLocation().getWorld().playSound(event.getEntity().getLocation(), Sound.ENTITY_FIREWORK_ROCKET_LAUNCH,12,1);
+            
+            int maxdistance = (Hitman.getPlugin().getServer().getSimulationDistance()-1)*8;
+    
+            RayTraceResult rt = player.rayTraceBlocks(maxdistance);
+            Entity e = player.getTargetEntity(maxdistance);
+            Vector direction = player.getLocation().getDirection().normalize();
+            Location spawnloc = player.getEyeLocation().clone();
+            int distance = (Hitman.getPlugin().getServer().getSimulationDistance()-1)*8;
+            
+            if(e instanceof LivingEntity living){
+                living.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING,60,0,false,false));
+                distance = (int) player.getEyeLocation().distance(living.getEyeLocation());
+            } else if(rt != null){
+                Location targetloc = rt.getHitPosition().toLocation(player.getWorld());
+                targetloc.getWorld().spawnParticle(Particle.REDSTONE,targetloc,32,.1,.1,.1,0, new Particle.DustOptions(Color.RED,1));
+                distance = (int) player.getEyeLocation().distance(targetloc);
+            }
+    
+            for(int i = 0; i<distance; i++){
+                spawnloc.add(direction);
+            }
+            
+        }
+    }
+    
+    @EventHandler
+    public static void preventCrossbowReload(EntityLoadCrossbowEvent event){
+        if(event.getCrossbow() != null && HitmanItem.getItemId(event.getCrossbow()).equals(new SniperRifle().getId())){
+            event.setConsumeItem(false);
+        }
     }
 }
