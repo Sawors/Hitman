@@ -1,5 +1,6 @@
 package io.github.sawors.hitman.game.maps;
 
+import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,6 +15,14 @@ public class MapLoader {
     FileConfiguration data;
     String mapname;
     String variantname;
+    List<Location> spyspawns = new ArrayList<>();
+    //sniper
+    Location sniperspawn;
+    boolean sniperweapon = true;
+    boolean sniperspyglass = true;
+    boolean snipercctv = false;
+    // config
+    // ??????
     
     MapLoader(File mapdirectory){
         if(mapdirectory.isDirectory()){

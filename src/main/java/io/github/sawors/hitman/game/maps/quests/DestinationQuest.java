@@ -1,4 +1,6 @@
 package io.github.sawors.hitman.game.maps.quests;
 
-public class DestinationQuest {
+import io.github.sawors.hitman.game.maps.GameQuest;
+
+public class DestinationQuest extends GameQuest {
 }

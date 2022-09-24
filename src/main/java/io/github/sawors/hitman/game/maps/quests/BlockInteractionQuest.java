@@ -1,4 +1,6 @@
 package io.github.sawors.hitman.game.maps.quests;
 
-public class BlockInteractionQuest {
+import io.github.sawors.hitman.game.maps.GameQuest;
+
+public class BlockInteractionQuest extends GameQuest {
 }

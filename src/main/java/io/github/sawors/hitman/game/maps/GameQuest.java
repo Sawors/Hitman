@@ -1,5 +1,5 @@
 package io.github.sawors.hitman.game.maps;
 
-public class GameQuest {
+public abstract class GameQuest {
     private QuestType type;
 }

@@ -1,5 +1,14 @@
 name: TestMap
 variant: test
+sniper:
+  spawn:
+    x: 2.5
+    y: -54
+    z: 1.5
+  items:
+    weapon: true
+    spyglass: true
+    cctv-access: false
 spawnpoints:
   s1:
     x: 0
