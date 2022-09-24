@@ -56,9 +56,10 @@ public class SniperListeners implements Listener {
             if(e instanceof LivingEntity living){
                 living.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING,60,0,false,false));
                 distance = (int) player.getEyeLocation().distance(living.getEyeLocation());
-            } else if(rt != null){
+            } else if(rt != null && rt.getHitBlock() != null){
                 Location targetloc = rt.getHitPosition().toLocation(player.getWorld());
-                w.spawnParticle(Particle.REDSTONE,targetloc,32,.1,.1,.1,0, new Particle.DustOptions(Color.RED,1));
+                w.spawnParticle(Particle.BLOCK_DUST,targetloc,32,.1,.1,.1,0, rt.getHitBlock().getBlockData());
+                w.playSound(targetloc,rt.getHitBlock().getBlockSoundGroup().getBreakSound(),1,1);
                 distance = (int) player.getEyeLocation().distance(targetloc);
             }
     

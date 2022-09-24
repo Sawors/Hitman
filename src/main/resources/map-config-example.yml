@@ -1,0 +1,22 @@
+name: TestMap
+variant: test
+spawnpoints:
+  s1:
+    x: 0
+    y: 4
+    z: 0
+    radius: 5
+quests:
+  q1:
+    type: interaction
+    name: "atm pay"
+    validation: shared
+    interaction:
+      target:
+        block: "iron_block"
+        x: 5
+        y: 4
+        z: 0
+      key:
+        item: "gold_ingot"
+        custom_id: "credit_card"

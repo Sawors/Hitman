@@ -1,6 +1,7 @@
 package io.github.sawors.hitman.game;
 
 import io.github.sawors.hitman.Hitman;
+import io.github.sawors.hitman.game.maps.GameQuest;
 import org.apache.commons.lang.RandomStringUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
