@@ -2,6 +2,7 @@ package io.github.sawors.hitman.commands;
 
 import io.github.sawors.hitman.Hitman;
 import io.github.sawors.hitman.game.maps.MapLoader;
+import io.github.sawors.hitman.game.maps.MapSpawnpoint;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -18,6 +19,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditMap implements CommandExecutor {
     @Override
@@ -30,7 +33,7 @@ public class EditMap implements CommandExecutor {
             double y = blockloc.getY();
             double z = blockloc.getZ()+0.5;
             switch(args[0]){
-                case "setspawn":
+                case "setspawn" -> {
                     if(args.length >= 2){
                         String category = args[1];
                         if(category.equals("sniper")){
@@ -117,6 +120,19 @@ public class EditMap implements CommandExecutor {
                             }
                         }
                     }
+                }
+                case"listspawns" -> {
+                    List<MapSpawnpoint> points = new ArrayList<>();
+                    worldconfig = YamlConfiguration.loadConfiguration(worldconfigfile);
+                    ConfigurationSection spawns = worldconfig.getConfigurationSection("spawnpoints");
+                    StringBuilder builder = new StringBuilder();
+                    if(spawns != null){
+                        builder.append(ChatColor.YELLOW).append("Spawnpoints for map ").append(player.getWorld().getName()).append(" :");
+                        for(String point : spawns.getKeys(false)){
+                            builder.append("\n").append(ChatColor.GREEN).append(" - ").append(point);
+                        }
+                    }
+                }
             }
         }
         return false;

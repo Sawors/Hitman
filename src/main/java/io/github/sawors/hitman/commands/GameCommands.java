@@ -30,7 +30,7 @@ public class GameCommands implements CommandExecutor {
                     StringBuilder gameids = new StringBuilder();
                     gameids.append(ChatColor.YELLOW).append("Game List :");
                     for(GameManager tolist : Hitman.getGameList()){
-                        gameids.append("\n").append(ChatColor.GREEN).append("- ").append(tolist.getId());
+                        gameids.append("\n").append(ChatColor.GREEN).append(" - ").append(tolist.getId());
                     }
                     sender.sendMessage(Component.text(gameids.toString()));
                 }
