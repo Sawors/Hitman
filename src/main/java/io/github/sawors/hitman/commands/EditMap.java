@@ -2,7 +2,6 @@ package io.github.sawors.hitman.commands;
 
 import io.github.sawors.hitman.Hitman;
 import io.github.sawors.hitman.game.maps.MapLoader;
-import io.github.sawors.hitman.game.maps.MapSpawnpoint;
 import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
@@ -19,8 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 public class EditMap implements CommandExecutor {
     @Override
@@ -68,22 +66,31 @@ public class EditMap implements CommandExecutor {
                                 try{
                                     radius = Integer.parseInt(radstring);
                                 } catch (NumberFormatException ignored){}
-                                
-                                if(radius >= 0){
-                                    sender.sendMessage(Component.text(ChatColor.YELLOW+"spawnpoint "+category+" successfully removed !"));
-                                    return true;
-                                }
-                                if(spawnpoints.getKeys(false).contains(category)){
-                                    sender.sendMessage(Component.text(ChatColor.YELLOW+"spawnpoint "+category+" has already been set, changing its position"));
-                                }
-                                
+    
                                 ConfigurationSection point = spawnpoints.createSection(category);
+                                
+                                if(spawnpoints.getKeys(false).contains(category)){
+                                    if(radius >= 0){
+                                        try {
+                                            Objects.requireNonNull(point.getRoot()).set(Objects.requireNonNull(point.getCurrentPath()),null);
+                                            worldconfig.save(worldconfigfile);
+                                            sender.sendMessage(Component.text(ChatColor.YELLOW+"spawnpoint \""+category+"\" successfully removed !"));
+                                        } catch (IOException | NullPointerException e) {
+                                            e.printStackTrace();
+                                        }
+                                        return true;
+                                    } else {
+                                        sender.sendMessage(Component.text(ChatColor.YELLOW+"spawnpoint \""+category+"\" has already been set, changing its position"));
+                                    }
+                                    
+                                }
+                                
                                 point.set("x",x);
                                 point.set("y",y);
                                 point.set("z",z);
                                 point.set("radius",radius);
                                 
-                                sender.sendMessage(Component.text(ChatColor.GREEN+"spawnpoint "+ChatColor.AQUA+category+ChatColor.GREEN+" (spies) set to "+x+" "+y+" "+z+" with radius "+radius));
+                                sender.sendMessage(Component.text(ChatColor.GREEN+"spawnpoint \""+ChatColor.AQUA+category+ChatColor.GREEN+"\" (spies) set to "+x+" "+y+" "+z+" with radius "+radius));
                                 Location center = new Location(player.getWorld(),x,y,z);
                                 final int fradius = radius;
                                 new BukkitRunnable(){
@@ -97,11 +104,7 @@ public class EditMap implements CommandExecutor {
     
                                         for(int i = -fradius; i <= fradius; i++){
                                             for(int i2 = -fradius; i2 <= fradius; i2++){
-                                                if(Math.abs(i) == fradius || Math.abs(i2) == fradius){
-                                                    center.getWorld().spawnParticle(Particle.REDSTONE,center.clone().add(i,.5,i2),8,0,0,0,0, new Particle.DustOptions(Color.ORANGE,1));
-                                                } else {
-                                                    center.getWorld().spawnParticle(Particle.REDSTONE,center.clone().add(i,.25,i2),8,.25,0,.25,0, new Particle.DustOptions(Color.YELLOW,.75f));
-                                                }
+                                                center.getWorld().spawnParticle(Particle.REDSTONE,center.clone().add(i,.5,i2),8,0,0,0,0, new Particle.DustOptions(Color.ORANGE,1));
                                             }
                                         }
                                         
@@ -113,7 +116,7 @@ public class EditMap implements CommandExecutor {
                                 try {
                                     worldconfig.save(worldconfigfile);
                                 } catch (IOException e) {
-                                    throw new RuntimeException(e);
+                                    e.printStackTrace();
                                 }
                                 
                                 return true;
@@ -122,7 +125,6 @@ public class EditMap implements CommandExecutor {
                     }
                 }
                 case"listspawns" -> {
-                    List<MapSpawnpoint> points = new ArrayList<>();
                     worldconfig = YamlConfiguration.loadConfiguration(worldconfigfile);
                     ConfigurationSection spawns = worldconfig.getConfigurationSection("spawnpoints");
                     StringBuilder builder = new StringBuilder();
@@ -131,6 +133,7 @@ public class EditMap implements CommandExecutor {
                         for(String point : spawns.getKeys(false)){
                             builder.append("\n").append(ChatColor.GREEN).append(" - ").append(point);
                         }
+                        sender.sendMessage(builder.toString());
                     }
                 }
             }

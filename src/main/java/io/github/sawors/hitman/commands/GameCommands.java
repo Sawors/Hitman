@@ -75,6 +75,7 @@ public class GameCommands implements CommandExecutor {
                                 PlayerRole role = PlayerRole.valueOf(PlayerRole.class, rolestr.toUpperCase(Locale.ROOT));
         
                                 gm.setPlayerRole(player,role);
+                                sender.sendMessage(ChatColor.GREEN+"Role \n"+rolestr.toLowerCase(Locale.ROOT)+"\n has been given to player "+p.getName());
                                 return true;
                             } catch (IllegalArgumentException e){
                                 sender.sendMessage(ChatColor.RED+"Role "+rolestr.toLowerCase(Locale.ROOT)+" does not exist");
