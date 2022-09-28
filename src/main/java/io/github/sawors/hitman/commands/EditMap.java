@@ -34,6 +34,7 @@ public class EditMap implements CommandExecutor {
                     if(args.length >= 2){
                         String category = args[1];
                         if(category.equals("sniper")){
+                            // setting sniper spawn-point
                             ConfigurationSection sniper = worldconfig.getConfigurationSection("sniper");
                             if(sniper != null){
                                 ConfigurationSection sniperspawn = sniper.getConfigurationSection("spawn");
@@ -51,16 +52,11 @@ public class EditMap implements CommandExecutor {
                                 }
                             }
                         } else {
+                            // setting NPCs and spies spawn-points
                             ConfigurationSection spawnpoints = worldconfig.getConfigurationSection("spawnpoints");
                             
                             if(spawnpoints != null){
-                                if(spawnpoints.getKeys(false).contains(category)){
-                                    sender.sendMessage(Component.text(ChatColor.YELLOW+"spawnpoint "+category+" has already been set, changing its position"));
-                                }
-                                ConfigurationSection point = spawnpoints.createSection(category);
-                                point.set("x",x);
-                                point.set("y",y);
-                                point.set("z",z);
+                                
                                 String radstring = "1";
                                 int radius = 1;
                                 if(args.length >= 3){
@@ -69,7 +65,21 @@ public class EditMap implements CommandExecutor {
                                 try{
                                     radius = Integer.parseInt(radstring);
                                 } catch (NumberFormatException ignored){}
+                                
+                                if(radius >= 0){
+                                    sender.sendMessage(Component.text(ChatColor.YELLOW+"spawnpoint "+category+" successfully removed !"));
+                                    return true;
+                                }
+                                if(spawnpoints.getKeys(false).contains(category)){
+                                    sender.sendMessage(Component.text(ChatColor.YELLOW+"spawnpoint "+category+" has already been set, changing its position"));
+                                }
+                                
+                                ConfigurationSection point = spawnpoints.createSection(category);
+                                point.set("x",x);
+                                point.set("y",y);
+                                point.set("z",z);
                                 point.set("radius",radius);
+                                
                                 sender.sendMessage(Component.text(ChatColor.GREEN+"spawnpoint "+ChatColor.AQUA+category+ChatColor.GREEN+" (spies) set to "+x+" "+y+" "+z+" with radius "+radius));
                                 Location center = new Location(player.getWorld(),x,y,z);
                                 final int fradius = radius;
@@ -102,6 +112,8 @@ public class EditMap implements CommandExecutor {
                                 } catch (IOException e) {
                                     throw new RuntimeException(e);
                                 }
+                                
+                                return true;
                             }
                         }
                     }
