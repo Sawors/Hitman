@@ -113,6 +113,9 @@ public abstract class HitmanItem {
     
     public static String getItemId(ItemStack item){
         String id = item.getType().toString().toLowerCase(Locale.ROOT);
+        if(!item.hasItemMeta()){
+            return id;
+        }
         String hitmanid = item.getItemMeta().getPersistentDataContainer().get(getItemKey(),PersistentDataType.STRING);
         return hitmanid != null ? hitmanid : id;
     }

@@ -5,7 +5,7 @@ sniper:
     x: 2.5
     y: -54
     z: 1.5
-  items:
+  config:
     weapon: true
     spyglass: true
     cctv-access: false

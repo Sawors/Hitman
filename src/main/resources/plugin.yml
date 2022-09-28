@@ -11,3 +11,7 @@ commands:
     description: uwu
   giveitem:
     description: uwu
+  editmap:
+    description: uwu
+  game:
+    description: uwu

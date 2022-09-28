@@ -13,6 +13,10 @@ public class CreateGame implements CommandExecutor {
     
         GameManager gm = new GameManager();
         
+        if(sender instanceof Player p){
+            gm.setMap(p.getWorld());
+        }
+        
         sender.sendMessage("new game created : id="+gm.getId());
         if(sender instanceof Player p){
             gm.addPlayer(p);

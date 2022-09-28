@@ -1,8 +1,6 @@
 package io.github.sawors.hitman;
 
-import io.github.sawors.hitman.commands.CreateGame;
-import io.github.sawors.hitman.commands.GiveItem;
-import io.github.sawors.hitman.commands.SetRole;
+import io.github.sawors.hitman.commands.*;
 import io.github.sawors.hitman.game.GameManager;
 import io.github.sawors.hitman.game.sniper.SniperListeners;
 import net.kyori.adventure.text.Component;
@@ -15,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -37,6 +36,8 @@ public final class Hitman extends JavaPlugin {
             Objects.requireNonNull(getServer().getPluginCommand("setrole")).setExecutor(new SetRole());
             Objects.requireNonNull(getServer().getPluginCommand("creategame")).setExecutor(new CreateGame());
             Objects.requireNonNull(getServer().getPluginCommand("giveitem")).setExecutor(new GiveItem());
+            Objects.requireNonNull(getServer().getPluginCommand("editmap")).setExecutor(new EditMap());
+            Objects.requireNonNull(getServer().getPluginCommand("game")).setExecutor(new GameCommands());
         }catch (NullPointerException e){
             e.printStackTrace();
         }
@@ -95,5 +96,9 @@ public final class Hitman extends JavaPlugin {
     
     public static @Nullable String getPlayerGameId(UUID playerid){
         return playerlink.get(playerid);
+    }
+    
+    public static List<GameManager> getGameList(){
+        return List.copyOf(gamelist.values());
     }
 }
