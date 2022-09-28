@@ -52,12 +52,15 @@ public class GameCommands implements CommandExecutor {
             String subcommand = args[shift];
             switch (subcommand) {
                 case "spawn" -> {
+                    sender.sendMessage(ChatColor.YELLOW+"Spawning NPCs...");
                     gm.spawnNpc();
+                    sender.sendMessage(ChatColor.GREEN+"NPCs successfully spawned and spread !");
                     return true;
                 }
                 case "join" -> {
                     if (sender instanceof Player p) {
                         gm.addPlayer(p);
+                        sender.sendMessage(ChatColor.GREEN+"You joined "+gm.getId());
                     }
                     return true;
                 }
