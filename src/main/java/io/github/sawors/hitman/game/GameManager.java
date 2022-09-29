@@ -5,11 +5,10 @@ import io.github.sawors.hitman.game.maps.GameQuest;
 import io.github.sawors.hitman.game.maps.MapLoader;
 import io.github.sawors.hitman.game.maps.MapSpawnpoint;
 import org.apache.commons.lang.RandomStringUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 
 import java.util.*;
 
@@ -35,10 +34,22 @@ public class GameManager {
     
     public void spawnNpc(){
         mapdata.loadMapData();
+        List<LivingEntity> spies = new ArrayList<>();
+        for(Map.Entry<UUID, PlayerRole> entry : playermap.entrySet()){
+            Player p = Bukkit.getPlayer(entry.getKey());
+            if(entry.getValue().equals(PlayerRole.SPY) && p != null){
+                spies.add(p);
+            }
+        }
+        // TEST PURPOSE
+        for(int i1 = 0; i1 < 4; i1++){
+            World w = mapdata.getSpySpawns().get(0).getLoc().getWorld();
+            spies.add(mapdata.getSpySpawns().get(0).getLoc().getWorld().spawn(w.getSpawnLocation(), ArmorStand.class));
+        }
         for(MapSpawnpoint point : mapdata.getSpySpawns()){
             Location center = point.getLoc();
             int radius = point.getRadius();
-            int npcamount = Math.min((radius*radius*4)/9,512);
+            int npcamount = Math.max(0,Math.min((radius*radius*4)/9,512));
             List<Location> spawnlocs = new ArrayList<>();
             for(int i = -radius; i <= radius; i++){
                 for(int i2 = -radius; i2 <= radius; i2++){
@@ -53,9 +64,13 @@ public class GameManager {
                 }
             }
             Collections.shuffle(spawnlocs);
-            for(int i = 1; i<=npcamount; i++) {
+            for(int i = 1; i<=npcamount-spies.size(); i++) {
                 // actually spawning the entities
                 npclist.add(center.getWorld().spawnEntity(spawnlocs.get(i), EntityType.VILLAGER));
+            }
+            for(int i = 1; i<=spies.size(); i++) {
+                // actually spawning the entities
+                spies.get(i).teleport(spawnlocs.get(npcamount-spies.size()+i));
             }
         }
     }
