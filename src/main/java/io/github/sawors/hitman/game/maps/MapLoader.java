@@ -26,7 +26,14 @@ public class MapLoader {
     World world;
     // config
     // ??????
-    
+
+
+    //DECI
+    // One World -> one hitman map
+    //      Better instantiation management & better memory usage -> smaller partitions
+    //      Easier to install and manage, small files and easier to isolate specifically one map
+    //      Allow for better and more performant player detection : Player.getWorld() will always point to the true map the player is on and not multiple possible maps
+    // Decision taken the 30.09.2022 by Sawors
     public MapLoader(World w) throws NullPointerException {
         source = new File(w.getWorldFolder()+File.separator+getDataFileName());
         if(!source.exists()){

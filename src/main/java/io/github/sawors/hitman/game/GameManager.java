@@ -4,11 +4,12 @@ import io.github.sawors.hitman.Hitman;
 import io.github.sawors.hitman.game.maps.GameQuest;
 import io.github.sawors.hitman.game.maps.MapLoader;
 import io.github.sawors.hitman.game.maps.MapSpawnpoint;
+import io.github.sawors.hitman.game.sniper.items.SniperRifle;
+import io.github.sawors.hitman.game.sniper.items.SniperSpyglass;
 import org.apache.commons.lang.RandomStringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
@@ -29,7 +30,19 @@ public class GameManager {
     }
     
     public void start(){
-    
+
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // DO SOMETHING FOR INSTANTIATION HERE !!!!!!!!!!!
+        // one map should never be able to be used by multiple different GameManager instances
+        // 2 Options :
+        //      - create a temp copy of the map (NEVER touch the reference map) and play on it (cool but very resource intensive)
+        //        must implement some kind of limitation otherwise we'll find ourselves with 10k map instances
+        //              -> dynamically create maps instances
+        //      - allow for a maximum of games per map to be played and create BEFORE the game starts multiple map copies
+        //              -> create in advance multiple maps instances
+
+        spawnNpc();
+        spawnSniper();
     }
     
     public void spawnNpc(){
@@ -83,6 +96,36 @@ public class GameManager {
             } else {
                 Hitman.logAdmin("NPC spawns failed : not enough suitable spawn locations found ! ("+spawnlocs.size()+" Locations for "+playeramount+" Players)");
             }
+        }
+    }
+
+    // TOTEST
+    //  - sniper recognition
+    //  - sniper item giving && if they work
+    //  - sniper teleportation
+    public void spawnSniper(){
+        Player sniper = null;
+
+        for(Map.Entry<UUID, PlayerRole> entry : playermap.entrySet()) {
+            Player p = Bukkit.getPlayer(entry.getKey());
+            if (entry.getValue().equals(PlayerRole.SNIPER) && p != null) {
+                sniper = p;
+            }
+        }
+
+        if(sniper != null){
+            // Teleport to sniper spawn
+            sniper.teleport(mapdata.getSniperspawn());
+            // Give items
+            // TOTEST
+            //  - check if slot 0 is really the first hotbar slot
+            //  - check if slot 1 is really the second hotbar slot
+            //  - check if slot 9 is really the upper-left inventory slot
+            sniper.getInventory().setItem(0, new SniperRifle().get());
+            sniper.getInventory().setItem(1, new SniperSpyglass().get());
+            sniper.getInventory().setItem(9, new ItemStack(Material.ARROW));
+        } else {
+            Hitman.logAdmin(ChatColor.RED+"Error : No sniper in the game");
         }
     }
     
