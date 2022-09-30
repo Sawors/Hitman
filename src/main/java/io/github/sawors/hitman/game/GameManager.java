@@ -35,24 +35,21 @@ public class GameManager {
     public void spawnNpc(){
         mapdata.loadMapData();
         List<LivingEntity> spies = new ArrayList<>();
-        for(Map.Entry<UUID, PlayerRole> entry : playermap.entrySet()){
+        for(Map.Entry<UUID, PlayerRole> entry : playermap.entrySet()) {
             Player p = Bukkit.getPlayer(entry.getKey());
-            if(entry.getValue().equals(PlayerRole.SPY) && p != null){
+            if (entry.getValue().equals(PlayerRole.SPY) && p != null) {
                 spies.add(p);
             }
         }
-        // TEST PURPOSE
-        // TOTEST
-        //  - check if it works with the new protocol
         for(int i1 = 0; i1 < 4; i1++){
             World w = mapdata.getSpySpawns().get(0).getLoc().getWorld();
             spies.add(mapdata.getSpySpawns().get(0).getLoc().getWorld().spawn(w.getSpawnLocation(), ArmorStand.class));
         }
+        List<Location> spawnlocs = new ArrayList<>();
         for(MapSpawnpoint point : mapdata.getSpySpawns()){
             Location center = point.getLoc();
             int radius = point.getRadius();
             int npcamount = Math.max(0,Math.min((radius*radius*4)/9,512));
-            List<Location> spawnlocs = new ArrayList<>();
             for(int i = -radius; i <= radius; i++){
                 for(int i2 = -radius; i2 <= radius; i2++){
                     Location tocheck = center.clone().add(i,0,i2);
@@ -66,13 +63,25 @@ public class GameManager {
                 }
             }
             Collections.shuffle(spawnlocs);
-            for(int i = 1; i<=npcamount-spies.size(); i++) {
-                // actually spawning the entities
-                npclist.add(center.getWorld().spawnEntity(spawnlocs.get(i), EntityType.VILLAGER));
-            }
-            for(int i = 1; i<=spies.size(); i++) {
-                // actually spawning the entities
-                spies.get(i).teleport(spawnlocs.get(npcamount-spies.size()+i));
+
+            // TOTEST
+            //  new protocol (new spawn system)
+            //      do a simple spawn on the map and check if fake players are well spawn and spread + check for "not enough locations" error
+            int playeramount = spies.size();
+            int totalspawns = npcamount+playeramount;
+
+            // spawning the players first to ensure they are at least spawned
+            if(spawnlocs.size() >= totalspawns){
+                // moving players
+                for(int i = 0; i<playeramount; i++) {
+                    spies.get(i).teleport(spawnlocs.get(i));
+                }
+                // spawning NPCs
+                for(int i = 1; i<=npcamount; i++) {
+                    npclist.add(center.getWorld().spawnEntity(spawnlocs.get(playeramount+i), EntityType.VILLAGER));
+                }
+            } else {
+                Hitman.logAdmin("NPC spawns failed : not enough suitable spawn locations found ! ("+spawnlocs.size()+" Locations for "+playeramount+" Players)");
             }
         }
     }
