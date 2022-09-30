@@ -42,6 +42,8 @@ public class GameManager {
             }
         }
         // TEST PURPOSE
+        // TOTEST
+        //  - check if it works with the new protocol
         for(int i1 = 0; i1 < 4; i1++){
             World w = mapdata.getSpySpawns().get(0).getLoc().getWorld();
             spies.add(mapdata.getSpySpawns().get(0).getLoc().getWorld().spawn(w.getSpawnLocation(), ArmorStand.class));
