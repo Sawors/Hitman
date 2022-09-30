@@ -106,6 +106,8 @@ public class MapLoader {
         }
 
         // loading camera data
+        // TOTEST
+        //  camera loading and if loaded camera work
         ConfigurationSection cameras = data.getConfigurationSection("cameras");
         if(cameras != null){
             for(String key : cameras.getKeys(false)){
