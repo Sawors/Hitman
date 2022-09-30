@@ -24,6 +24,8 @@ public class MapLoader {
     boolean sniperspyglass = true;
     boolean snipercctv = false;
     World world;
+
+
     // config
     // ??????
 
@@ -81,6 +83,7 @@ public class MapLoader {
     
         sniperspyglass = sniperconfigsection.getBoolean("spyglass");
         sniperweapon = sniperconfigsection.getBoolean("weapon");
+        // TODO : CCTV system
         snipercctv = sniperconfigsection.getBoolean("cctv-access");
     
         // Loading spy and npc data

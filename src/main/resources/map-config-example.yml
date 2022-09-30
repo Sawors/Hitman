@@ -9,6 +9,14 @@ sniper:
     weapon: true
     spyglass: true
     cctv-access: false
+  cctv:
+    camera-1:
+      location:
+        x: 0
+        y: 0
+        z: 0
+      yaw: 90
+      pitch: -45
 spawnpoints:
   s1:
     x: 0
