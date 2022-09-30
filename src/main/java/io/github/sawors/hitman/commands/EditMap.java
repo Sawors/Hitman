@@ -136,6 +136,12 @@ public class EditMap implements CommandExecutor {
                         sender.sendMessage(builder.toString());
                     }
                 }
+                case"setcamera" -> {
+
+                }
+                case"listcameras" -> {
+                    sender.sendMessage("camlist");
+                }
             }
         }
         return false;
