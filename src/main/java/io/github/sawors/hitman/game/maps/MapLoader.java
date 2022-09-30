@@ -12,19 +12,20 @@ import java.util.List;
 import java.util.Set;
 
 public class MapLoader {
-    List<GameQuest> quests = new ArrayList<>();
-    File source;
-    YamlConfiguration data;
-    String mapname;
-    String variantname;
-    List<MapSpawnpoint> spyspawns = new ArrayList<>();
+    private List<GameQuest> quests = new ArrayList<>();
+    private File source;
+    private YamlConfiguration data;
+    private String mapname;
+    private String variantname;
+    private List<MapSpawnpoint> spyspawns = new ArrayList<>();
     //sniper
-    Location sniperspawn;
-    boolean sniperweapon = true;
-    boolean sniperspyglass = true;
-    boolean snipercctv = false;
-    World world;
+    private Location sniperspawn;
+    private boolean sniperweapon = true;
+    private boolean sniperspyglass = true;
+    private boolean snipercctv = false;
+    private World world;
 
+    private List<MapCamera> cams = new ArrayList<>();
 
     // config
     // ??????
@@ -103,8 +104,29 @@ public class MapLoader {
                 spyspawns.add(new MapSpawnpoint(new Location(world,spx,spy,spz), radius,name));
             }
         }
+
+        // loading camera data
+        ConfigurationSection cameras = data.getConfigurationSection("cameras");
+        if(cameras != null){
+            for(String key : cameras.getKeys(false)){
+                ConfigurationSection camsection = cameras.getConfigurationSection(key);
+                // useless check here since we are looping through EXISTING keys
+                if(camsection != null){
+                    double x = camsection.getDouble("x");
+                    double y = camsection.getDouble("y");
+                    double z = camsection.getDouble("z");
+                    Location camloc = new Location(world,x,y,z);
+                    double pitch = camsection.getDouble("pitch");
+                    double yaw = camsection.getDouble("yaw");
+                    String name = camsection.getString("name");
+
+                    cams.add(new MapCamera(this, camloc,yaw,pitch,name));
+                }
+            }
+        }
     }
-    
+
+    // TODO : maybe here instead of creating the reference by hand we should use the map-config-example.yml (plugin resource) as a reference for configs (or at least create a reference as a .yml file in the resources)
     public static YamlConfiguration getMinimalConfig(){
         YamlConfiguration config = new YamlConfiguration();
         ConfigurationSection sniper = config.createSection("sniper");
@@ -112,7 +134,7 @@ public class MapLoader {
         ConfigurationSection sniperconfig = sniper.createSection("config");
         ConfigurationSection spawnpoints = config.createSection("spawnpoints");
         ConfigurationSection quests = config.createSection("quests");
-        
+        ConfigurationSection camera = config.createSection("cameras");
         
         return config;
     }
@@ -162,5 +184,9 @@ public class MapLoader {
     
     public boolean isSnipercctv() {
         return snipercctv;
+    }
+
+    public List<MapCamera> getCameras(){
+        return List.copyOf(cams);
     }
 }
