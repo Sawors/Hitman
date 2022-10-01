@@ -77,9 +77,6 @@ public class GameManager {
             }
             Collections.shuffle(spawnlocs);
 
-            // TOTEST
-            //  new protocol (new spawn system)
-            //      do a simple spawn on the map and check if fake players are well spawn and spread + check for "not enough locations" error
             int playeramount = spies.size();
             int totalspawns = npcamount+playeramount;
 
@@ -99,10 +96,6 @@ public class GameManager {
         }
     }
 
-    // TOTEST
-    //  - sniper recognition
-    //  - sniper item giving && if they work
-    //  - sniper teleportation
     public void spawnSniper(){
         Player sniper = null;
 
@@ -117,15 +110,27 @@ public class GameManager {
             // Teleport to sniper spawn
             sniper.teleport(mapdata.getSniperspawn());
             // Give items
-            // TOTEST
-            //  - check if slot 0 is really the first hotbar slot
-            //  - check if slot 1 is really the second hotbar slot
-            //  - check if slot 9 is really the upper-left inventory slot
             sniper.getInventory().setItem(0, new SniperRifle().get());
             sniper.getInventory().setItem(1, new SniperSpyglass().get());
             sniper.getInventory().setItem(9, new ItemStack(Material.ARROW));
         } else {
             Hitman.logAdmin(ChatColor.RED+"Error : No sniper in the game");
+        }
+    }
+    
+    public void despawnNpc(){
+        for(Entity e : npclist){
+            switch(e.getType()){
+                case PLAYER -> {
+                    e.teleport(mapdata.getSniperspawn());
+                }
+                case VILLAGER -> {
+                    e.remove();
+                }
+                case ARMOR_STAND -> {
+                    e.setGlowing(true);
+                }
+            }
         }
     }
     
@@ -135,6 +140,10 @@ public class GameManager {
     
     public void setMap(World world){
         setMap(new MapLoader(world));
+    }
+    
+    public MapLoader getMap(){
+        return mapdata;
     }
     
     public void addPlayer(Player p){
@@ -157,5 +166,9 @@ public class GameManager {
     
     public String getId(){
         return gameid;
+    }
+    
+    public static NamespacedKey getGameManagerIdKey(){
+        return new NamespacedKey(Hitman.getPlugin(),"gamemanager");
     }
 }

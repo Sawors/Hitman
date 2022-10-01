@@ -2,6 +2,7 @@ package io.github.sawors.hitman;
 
 import io.github.sawors.hitman.commands.*;
 import io.github.sawors.hitman.game.GameManager;
+import io.github.sawors.hitman.game.maps.MapCamera;
 import io.github.sawors.hitman.game.sniper.SniperListeners;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -32,6 +33,8 @@ public final class Hitman extends JavaPlugin {
         saveDefaultConfig();
         
         getServer().getPluginManager().registerEvents(new SniperListeners(),this);
+        getServer().getPluginManager().registerEvents(new GameCommands(),this);
+        getServer().getPluginManager().registerEvents(new MapCamera(),this);
         try{
             Objects.requireNonNull(getServer().getPluginCommand("setrole")).setExecutor(new SetRole());
             Objects.requireNonNull(getServer().getPluginCommand("creategame")).setExecutor(new CreateGame());
@@ -96,6 +99,11 @@ public final class Hitman extends JavaPlugin {
     
     public static @Nullable String getPlayerGameId(UUID playerid){
         return playerlink.get(playerid);
+    }
+    
+    public static @Nullable GameManager getPlayerGame(UUID playerid){
+        
+        return gamelist.get(playerlink.get(playerid));
     }
     
     public static List<GameManager> getGameList(){

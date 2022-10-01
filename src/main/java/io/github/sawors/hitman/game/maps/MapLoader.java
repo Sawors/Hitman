@@ -4,12 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MapLoader {
     private List<GameQuest> quests = new ArrayList<>();
@@ -25,7 +24,7 @@ public class MapLoader {
     private boolean snipercctv = false;
     private World world;
 
-    private List<MapCamera> cams = new ArrayList<>();
+    private HashMap<String, MapCamera> cams = new HashMap<>();
 
     // config
     // ??????
@@ -64,7 +63,7 @@ public class MapLoader {
         data = YamlConfiguration.loadConfiguration(source);
         
         // Loading general data
-        mapname = data.getString("name");
+        mapname = data.getString("name") != null ? data.getString("name") : world.getName();
         variantname = data.getString("variant");
     
         // Loading sniper data
@@ -84,7 +83,6 @@ public class MapLoader {
     
         sniperspyglass = sniperconfigsection.getBoolean("spyglass");
         sniperweapon = sniperconfigsection.getBoolean("weapon");
-        // TODO : CCTV system
         snipercctv = sniperconfigsection.getBoolean("cctv-access");
     
         // Loading spy and npc data
@@ -106,23 +104,24 @@ public class MapLoader {
         }
 
         // loading camera data
-        // TOTEST
-        //  camera loading and if loaded camera work
         ConfigurationSection cameras = data.getConfigurationSection("cameras");
         if(cameras != null){
             for(String key : cameras.getKeys(false)){
                 ConfigurationSection camsection = cameras.getConfigurationSection(key);
                 // useless check here since we are looping through EXISTING keys
                 if(camsection != null){
-                    double x = camsection.getDouble("x");
-                    double y = camsection.getDouble("y");
-                    double z = camsection.getDouble("z");
-                    Location camloc = new Location(world,x,y,z);
-                    double pitch = camsection.getDouble("pitch");
-                    double yaw = camsection.getDouble("yaw");
-                    String name = camsection.getString("name");
-
-                    cams.add(new MapCamera(this, camloc,yaw,pitch,name));
+                    ConfigurationSection locsection = camsection.getConfigurationSection("location");
+                    if(locsection != null){
+                        double x = locsection.getDouble("x");
+                        double y = locsection.getDouble("y");
+                        double z = locsection.getDouble("z");
+                        Location camloc = new Location(world,x,y,z);
+                        double pitch = camsection.getDouble("pitch");
+                        double yaw = camsection.getDouble("yaw");
+                        String name = camsection.getString("name");
+    
+                        cams.put(key.toLowerCase(Locale.ROOT),new MapCamera(this, camloc,yaw,pitch,name));
+                    }
                 }
             }
         }
@@ -189,6 +188,19 @@ public class MapLoader {
     }
 
     public List<MapCamera> getCameras(){
-        return List.copyOf(cams);
+        return List.copyOf(cams.values());
+    }
+    
+    public @Nullable String getCameraId(MapCamera camera){
+        for(Map.Entry<String, MapCamera> entry : cams.entrySet()){
+            if(entry.getValue().equals(camera)){
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+    
+    public @Nullable MapCamera getCamera(String id){
+        return cams.get(id);
     }
 }
